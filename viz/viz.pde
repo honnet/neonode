@@ -7,12 +7,11 @@ float[] xy = {0,0};
 float[] xy_max = {1260, 1043};
 
 
-// TODO:
-
-
 void setup() {
     size(1280, 720);
-    noStroke();
+    stroke(255);
+    strokeWeight(5);
+    background(0);
 
     // List all the available serial ports
     printArray(Serial.list());
@@ -42,11 +41,17 @@ void draw() {
 
             xy[0] = map(xy[0] ,  0, xy_max[0] ,  0.0, float(width));
             xy[1] = map(xy[1] ,  0, xy_max[1] ,  0.0, float(height));
-            int radius = int(0.1 * height);
-
-            background(0);
-            ellipse(xy[0], height-xy[1], radius, radius);
         }
     }
+
+    // Enable trail:
+    blendMode(SUBTRACT);
+    fill(255, 6);
+    rect(0, 0, width, height);
+    blendMode(BLEND);
+
+    // trace the point:
+    strokeWeight(0.05*height);
+    point(xy[0], height-xy[1]);
 }
 
