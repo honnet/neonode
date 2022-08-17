@@ -6,6 +6,8 @@ Serial myPort;  // The serial port
 float[] xy = {0,0};
 float[] xy_max = {1260, 1043};
 
+boolean use_trail = false;
+
 
 void setup() {
     size(1280, 720);
@@ -21,7 +23,7 @@ void setup() {
     // in the middle of a string from the sender.
     receivedString = myPort.readStringUntil('\n');
     receivedString = null;
-    println("Starting");
+    println("\nStarting, it might up to 10 seconds...");
 }
 
 void draw() {
@@ -42,14 +44,19 @@ void draw() {
         }
     }
 
-    // Enable trail:
-    blendMode(SUBTRACT);
-    fill(255, 6);
-    rect(0, 0, width, height);
-    blendMode(BLEND);
-
-    // trace the point:
+    if (use_trail) {
+        // show a trail behind the touch points:
+        blendMode(SUBTRACT);
+        fill(255, 6);
+        rect(0, 0, width, height);
+        blendMode(BLEND);
+    } else {
+        // clean the screen
+        background(0);
+    }
     strokeWeight(0.05*height);
-    point(xy[0], height-xy[1]);
+
+    // invert x direction:
+    point(width-xy[0], xy[1]);
 }
 
