@@ -6,6 +6,12 @@
 #define PIN_NN_RST 5
 
 
+#include <CapacitiveSensor.h>
+// 100 K resistor between pins 4 & 2 (pin 2 is sensor pin)
+CapacitiveSensor cs_4_2 = CapacitiveSensor(4, 2);
+const int threshold = 50; // TODO: make it automatic
+
+
 //#define DEBUG_PRINT
 
 #ifdef DEBUG_PRINT
@@ -69,9 +75,13 @@ void loop() {
                 unsigned y = ((TouchMessage*)touch)->touchData[i].y;
 
                 if (x != 0 && y != 0) {
+                    // get capacitive touch sensor state:
+                    long cap_touch = cs_4_2.capacitiveSensor(30);
+                    bool isAway = (cap_touch < threshold);
+
                     // TODO: add id
-                    char buf[17];
-                    sprintf(buf, "%04u.%04u\n", x, y);
+                    char buf[19];
+                    sprintf(buf, "%04u.%04u.%i\n", x, y, isAway);
                     Serial.print(buf);
                 }
 

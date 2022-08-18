@@ -3,15 +3,15 @@ import processing.serial.*;
 String receivedString = null;
 Serial myPort;  // The serial port
 
-float[] xy = {0,0};
+float[] xyz = {0,0,0};
 float[] xy_max = {1260, 1043};
 
 boolean use_trail = false;
 
 
 void setup() {
+//    fullScreen();
     size(1280, 720);
-    stroke(255);
     strokeWeight(5);
     background(0);
 
@@ -23,7 +23,7 @@ void setup() {
     // in the middle of a string from the sender.
     receivedString = myPort.readStringUntil('\n');
     receivedString = null;
-    println("\nStarting, it might up to 10 seconds...");
+    println("\nStarting: touch the device, it might up to 10 seconds...");
 }
 
 void draw() {
@@ -33,14 +33,15 @@ void draw() {
         println(receivedString);
 
         if (receivedString != null &&
-            receivedString.length() == 10 &&
+            receivedString.length() == 12 &&
             receivedString.charAt(4) == '.')
         {
-            xy[0] = Float.parseFloat(receivedString.substring(0, 4));
-            xy[1] = Float.parseFloat(receivedString.substring(5, 9));
+            xyz[0] = Float.parseFloat(receivedString.substring(0, 4));
+            xyz[1] = Float.parseFloat(receivedString.substring(5, 9));
+            xyz[2] = Float.parseFloat(receivedString.substring(10,11));
 
-            xy[0] = map(xy[0] ,  0, xy_max[0] ,  0.0, float(width));
-            xy[1] = map(xy[1] ,  0, xy_max[1] ,  0.0, float(height));
+            xyz[0] = map(xyz[0] ,  0, xy_max[0] ,  0.0, float(width));
+            xyz[1] = map(xyz[1] ,  0, xy_max[1] ,  0.0, float(height));
         }
     }
 
@@ -54,9 +55,17 @@ void draw() {
         // clean the screen
         background(0);
     }
-    strokeWeight(0.05*height);
+
+    // visualize if finger is away or not:
+    if (xyz[2] > 0) {
+        stroke(255);
+        strokeWeight(0.05*height);
+    } else {
+        stroke(255, 0, 0); // RED!
+        strokeWeight(0.15*height);
+    }
 
     // invert x direction:
-    point(width-xy[0], xy[1]);
+    point(width-xyz[0], xyz[1]);
 }
 
